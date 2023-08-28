@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -41,7 +42,7 @@ func SearchHandler(app *common.App) http.HandlerFunc {
 			if items, err = c.Search(keyword); err != nil {
 				log.Println(err)
 				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte("Oops, Something went wrong"))
+				w.Write([]byte(fmt.Sprintf("Oops, Something went wrong:%s",err)))
 				return
 			}
 
@@ -55,7 +56,7 @@ func SearchHandler(app *common.App) http.HandlerFunc {
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("Oops, Something went wrong"))
+			w.Write([]byte(fmt.Sprintf("Oops, Something went wrong: %s",err)))
 			return
 		}
 
@@ -74,9 +75,9 @@ func DownloadHandler(app *common.App) http.HandlerFunc {
 		if id := vars["id"]; len(id) != 0 {
 			c := app.Fetcher
 			if file, err = c.GetFromCache(id); err != nil {
-				log.Println(err)
+				log.Printf("getFromCached: %s",err)
 				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte("Oops, Something went wrong"))
+				w.Write([]byte(fmt.Sprintf("Oops, Something went wrong: %s",err)))
 				return
 			}
 		}

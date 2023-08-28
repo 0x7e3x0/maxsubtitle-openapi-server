@@ -33,6 +33,7 @@ func main() {
 	handler := configureRouters(app)
 	port := ":" + os.Getenv(HTTP_PORT)
 	log.Printf("listen on %s", port)
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
 	log.Fatal(http.ListenAndServe(port, handler))
 }
 
@@ -54,6 +55,9 @@ func initSetup(app *common.App) {
 	}
 	if path := os.Getenv(CACHE_PATH); len(path) != 0 {
 		app.Fetcher.CacheDir = path
+	}
+	_, err := os.Stat(app.Fetcher.CacheDir); if err != nil {
+		os.MkdirAll(app.Fetcher.CacheDir,0777)
 	}
 }
 
